@@ -3,7 +3,7 @@ export function registerContext(runtime: Runtime, includePrompt = true): void {
   runtime.pi.on('context', event => {
     if (!runtime.ready) return;
     const content = `Authoritative compatibility state:\n${JSON.stringify({ mode: runtime.state.mode, plan: runtime.state.plan, tasks: Object.values(runtime.state.tasks) })}`;
-    return { messages: [...event.messages.filter(m => !(m.role === 'custom' && m.customType === 'claude-compat:workflow')), { role: 'custom' as const, customType: 'claude-compat:workflow', content, display: false, timestamp: 0 }] };
+    return { messages: [...event.messages.filter(m => !(m.role === 'custom' && m.customType === 'code-compat:workflow')), { role: 'custom' as const, customType: 'code-compat:workflow', content, display: false, timestamp: 0 }] };
   });
   runtime.pi.on('session_before_compact', async (_event, ctx) => {
     const outcome = await runtime.hooks.run('PreCompact', {}, runtime.config, ctx.cwd, ctx.signal);
@@ -20,7 +20,7 @@ export function registerContext(runtime: Runtime, includePrompt = true): void {
     const workflow = { mode: runtime.state.mode, plan: runtime.state.plan, tasks: Object.values(runtime.state.tasks) };
     return {
       systemPrompt: runtime.prompts.system(ctx.model ? `${ctx.model.provider}/${ctx.model.id}` : 'unknown', ctx.cwd, [...runtime.tools], runtime.memory.format()),
-      message: { customType: 'claude-compat:workflow', content: `Authoritative compatibility state:\n${JSON.stringify(workflow)}${runtime.state.mode === 'plan' ? '\nPlan mode is active. Do not mutate source files or run shell commands. Write only the designated plan artifact and request approval with ExitPlanMode.' : ''}`, display: false },
+      message: { customType: 'code-compat:workflow', content: `Authoritative compatibility state:\n${JSON.stringify(workflow)}${runtime.state.mode === 'plan' ? '\nPlan mode is active. Do not mutate source files or run shell commands. Write only the designated plan artifact and request approval with ExitPlanMode.' : ''}`, display: false },
     };
   });
 }
