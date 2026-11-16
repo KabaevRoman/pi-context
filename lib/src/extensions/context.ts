@@ -1,4 +1,4 @@
-import type { Runtime } from '../runtime/runtime.ts';
+import type { Runtime } from 'pi-code-core/runtime/runtime';
 export function registerContext(runtime: Runtime, includePrompt = true): void {
   runtime.pi.on('context', event => {
     if (!runtime.ready) return;
